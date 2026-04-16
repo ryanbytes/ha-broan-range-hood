@@ -1,0 +1,12 @@
+{
+  "domain": "broan",
+  "name": "Broan Range Hood",
+  "version": "1.0.0",
+  "documentation": "https://github.com/ryanbytes/ha-broan-range-hood",
+  "issue_tracker": "https://github.com/ryanbytes/ha-broan-range-hood/issues",
+  "requirements": [],
+  "dependencies": [],
+  "codeowners": [],
+  "iot_class": "cloud_push",
+  "config_flow": true
+}

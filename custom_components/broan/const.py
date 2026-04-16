@@ -1,0 +1,73 @@
+"""Constants for the Broan Range Hood integration."""
+
+DOMAIN = "broan"
+
+# AWS infrastructure (extracted from app binary)
+AWS_REGION = "us-east-1"
+COGNITO_USER_POOL_ID = "us-east-1_trauPt3X3"
+COGNITO_CLIENT_ID = "6tm5oiro9e0aq89or4m4gc9r3k"
+COGNITO_IDENTITY_POOL_ID = "us-east-1:a92e6d58-8130-4ef3-b9af-71a989326c82"
+IOT_ENDPOINT = "adefdavige29g-ats.iot.us-east-1.amazonaws.com"
+API_BASE_URL = "https://6cfmlftxy8.execute-api.us-east-1.amazonaws.com/production"
+APP_BRAND = "broan"
+
+# Config keys
+CONF_SERIAL_NUMBER = "serial_number"
+CONF_DEVICE_NAME = "device_name"
+
+# AWS IoT Device Shadow field names (hex-encoded)
+SHADOW_CONNECTION_STATUS = "0x9999"
+SHADOW_FAN_STATE = "0x1001"
+SHADOW_FAN_SPEED = "0x1005"
+SHADOW_FAN_MODE = "0x1040"
+SHADOW_FAN_AUTO_SENSITIVITY = "0x1042"
+SHADOW_FAN_AUTO_STATUS = "0x1043"
+SHADOW_FAN_DELAY_OFF = "0x1050"
+SHADOW_LIGHT_STATE = "0x1020"
+SHADOW_LIGHT_INTENSITY = "0x1026"
+SHADOW_WIFI_SSID = "0x0f07"
+SHADOW_WIFI_DISCONNECT = "0x0f09"
+SHADOW_FACTORY_SETTINGS = "0x0f0a"
+SHADOW_FW_ESP = "0x0f00"
+SHADOW_FW_UI = "0x1060"
+SHADOW_FW_MAIN = "0x1061"
+SHADOW_OTA_AVAILABLE = "0x0f05"
+SHADOW_OTA_PROGRESSION = "0x0f04"
+
+# Device modes
+FAN_MODE_OFF = 0
+FAN_MODE_ON = 1
+FAN_MODE_AUTO = 2
+
+LIGHT_MODE_OFF = 0
+LIGHT_MODE_ON = 1
+LIGHT_MODE_AUTO = 2
+
+DELAY_OFF_DISABLED = 0
+DELAY_OFF_ENABLED = 1
+
+# Fan auto operation status values
+FAN_AUTO_STATUS_IDLE = 0
+FAN_AUTO_STATUS_STANDBY = 1
+FAN_AUTO_STATUS_RUNNING = 2
+FAN_AUTO_STATUS_OVERRIDE = 3
+
+FAN_AUTO_STATUS_NAMES = {
+    FAN_AUTO_STATUS_IDLE: "Disabled",
+    FAN_AUTO_STATUS_STANDBY: "Stand By",
+    FAN_AUTO_STATUS_RUNNING: "In Operation",
+    FAN_AUTO_STATUS_OVERRIDE: "Override",
+}
+
+# Fan auto sensitivity
+FAN_AUTO_SENSITIVITY_LOW = 1
+FAN_AUTO_SENSITIVITY_MEDIUM = 2
+FAN_AUTO_SENSITIVITY_HIGH = 3
+
+# Connection status
+CONNECTION_STATUS_CONNECTED = 1
+
+# Update intervals
+SCAN_INTERVAL_SECONDS = 30
+CREDENTIALS_REFRESH_SECONDS = 3000  # ~50 min, Cognito Identity creds last ~60 min
+TOKEN_REFRESH_SECONDS = 3300         # ~55 min, Cognito ID tokens last ~60 min

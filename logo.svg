@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Broan Range Hood Integration Logo</title>
+  <desc id="desc">A stylized kitchen hood with fan and light elements for the Broan Home Assistant integration.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#f7f2e7"/>
+      <stop offset="100%" stop-color="#efe6d5"/>
+    </linearGradient>
+    <linearGradient id="metal" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#4d5f70"/>
+      <stop offset="100%" stop-color="#1f2a34"/>
+    </linearGradient>
+    <linearGradient id="beam" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#ffe8a6" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#ffcf57" stop-opacity="0.12"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="108" fill="url(#bg)"/>
+  <path d="M92 170c0-20.99 17.01-38 38-38h252c20.99 0 38 17.01 38 38v24H92v-24z" fill="url(#metal)"/>
+  <path d="M116 194h280l-27 110c-4.34 17.68-20.19 30-38.39 30H181.39c-18.2 0-34.05-12.32-38.39-30L116 194z" fill="url(#metal)"/>
+  <rect x="168" y="212" width="176" height="18" rx="9" fill="#708190" opacity="0.7"/>
+  <circle cx="256" cy="264" r="48" fill="#fff6de"/>
+  <path d="M256 220c24.3 0 44 19.7 44 44 0 8.65-2.5 16.71-6.82 23.51l-16.53-11.24A24 24 0 0 0 280 264c0-13.25-10.75-24-24-24v-20z" fill="#ffb34d"/>
+  <path d="M226 266c0 13.25 10.75 24 24 24v20c-24.3 0-44-19.7-44-44 0-8.65 2.5-16.71 6.82-23.51l16.53 11.24A24 24 0 0 0 226 266z" fill="#ff9740"/>
+  <path d="M150 332l-38 116h84l24-116h-70z" fill="url(#beam)"/>
+  <path d="M292 332l24 116h84l-38-116h-70z" fill="url(#beam)"/>
+  <circle cx="182" cy="324" r="10" fill="#ffe08a"/>
+  <circle cx="330" cy="324" r="10" fill="#ffe08a"/>
+</svg>

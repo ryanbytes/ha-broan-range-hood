@@ -1,0 +1,24 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Broan Range Hood",
+        "description": "Connect your Broan/NuTone smart range hood.\n\nYou will need:\n• Your Broan app email and password\n• The **serial number** printed on the label inside your range hood (e.g. `A12345678`).",
+        "data": {
+          "email": "Email address",
+          "password": "Password",
+          "serial_number": "Serial number",
+          "device_name": "Device name (display label)"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Invalid email or password.",
+      "cannot_connect": "Cannot connect to Broan servers. Check your internet connection.",
+      "unknown": "Unexpected error. Check the logs."
+    },
+    "abort": {
+      "already_configured": "This range hood is already configured."
+    }
+  }
+}
