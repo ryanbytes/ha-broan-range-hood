@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euo pipefail
+set -eo pipefail
 FULL_KN="${1:-60}"
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 
