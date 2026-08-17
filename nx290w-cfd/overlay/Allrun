@@ -1,0 +1,9 @@
+#!/bin/bash
+set -e
+cd "${0%/*}" || exit 1
+. "$WM_PROJECT_DIR/bin/tools/RunFunctions"
+
+./Allmesh
+runApplication -a decomposePar -fields -copyZero
+runParallel foamRun
+runApplication reconstructPar
