@@ -48,14 +48,17 @@ jobs:
           chmod +x nx290w-cfd/overlay/Allmesh nx290w-cfd/overlay/Allrun
           nx290w-cfd/run_case.sh 60
 
-      - name: Collect results
+      - name: Collect results and diagnostics
         if: always()
         shell: bash
         run: |
           mkdir -p nx290w-cfd/artifact
-          cp -f nx290w-cfd/runs/NX290W_60kn_1to50/NX290W_summary.txt nx290w-cfd/artifact/ 2>/dev/null || true
-          cp -f nx290w-cfd/runs/NX290W_60kn_1to50/NX290W_60kn.log nx290w-cfd/artifact/ 2>/dev/null || true
-          cp -rf nx290w-cfd/runs/NX290W_60kn_1to50/postProcessing nx290w-cfd/artifact/ 2>/dev/null || true
+          CASE=nx290w-cfd/runs/NX290W_60kn_1to50
+          cp -f "$CASE"/NX290W_summary.txt nx290w-cfd/artifact/ 2>/dev/null || true
+          cp -f "$CASE"/NX290W_60kn.log nx290w-cfd/artifact/ 2>/dev/null || true
+          cp -f "$CASE"/log.* nx290w-cfd/artifact/ 2>/dev/null || true
+          cp -rf "$CASE"/postProcessing nx290w-cfd/artifact/ 2>/dev/null || true
+          for f in nx290w-cfd/artifact/log.*; do [ -f "$f" ] && { echo "===== $f ====="; tail -200 "$f"; }; done
           find nx290w-cfd/artifact -maxdepth 4 -type f -ls || true
 
       - uses: actions/upload-artifact@v4
