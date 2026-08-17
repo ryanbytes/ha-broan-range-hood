@@ -25,12 +25,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Identify OpenFOAM
+      - name: Prepare container
         shell: bash
         run: |
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y python3
           echo "WM_PROJECT_DIR=${WM_PROJECT_DIR:-unset}"
-          command -v foamRun || true
-          command -v blockMesh || true
+          ls -d /opt/openfoam14 /opt/OpenFOAM/OpenFOAM-14 2>/dev/null || true
           nproc
           free -h
 
