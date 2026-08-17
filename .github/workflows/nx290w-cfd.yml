@@ -6,6 +6,11 @@ on:
     paths:
       - 'nx290w-cfd/**'
       - '.github/workflows/nx290w-cfd.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'nx290w-cfd/**'
+      - '.github/workflows/nx290w-cfd.yml'
   workflow_dispatch:
 
 jobs:
