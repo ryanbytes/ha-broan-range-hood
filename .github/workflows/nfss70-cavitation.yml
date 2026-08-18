@@ -33,7 +33,7 @@ jobs:
       - name: Install OpenFOAM 14
         shell: bash
         run: |
-          set -euxo pipefail
+          set -eo pipefail
           sudo apt-get update
           sudo apt-get install -y wget software-properties-common
           sudo add-apt-repository -y universe
@@ -51,7 +51,7 @@ jobs:
         env:
           SIGMA: ${{ matrix.sigma }}
         run: |
-          set -euxo pipefail
+          set -eo pipefail
           . /opt/openfoam14/etc/bashrc
           mkdir -p run
           CASE="$GITHUB_WORKSPACE/run/sigma_${SIGMA}"
@@ -63,10 +63,10 @@ jobs:
           python3 - <<'PY'
           import os, re, pathlib
           sigma = float(os.environ['SIGMA'])
-          V = 36.011            # m/s, 70 kn
-          rho = 1025.0          # kg/m3, seawater study value
-          nu = 1.05e-6          # m2/s, seawater study value
-          p_sat = 2300.0        # Pa, matches OpenFOAM tutorial model
+          V = 36.011
+          rho = 1025.0
+          nu = 1.05e-6
+          p_sat = 2300.0
           q = 0.5*rho*V*V
           p_inf = p_sat + sigma*q
 
@@ -107,7 +107,7 @@ jobs:
         env:
           SIGMA: ${{ matrix.sigma }}
         run: |
-          set -euxo pipefail
+          set -eo pipefail
           . /opt/openfoam14/etc/bashrc
           cd "$GITHUB_WORKSPACE/run/sigma_${SIGMA}"
           bash Allrun
