@@ -110,7 +110,7 @@ jobs:
           set -eo pipefail
           . /opt/openfoam14/etc/bashrc
           cd "$GITHUB_WORKSPACE/run/sigma_${SIGMA}"
-          bash Allrun
+          bash ./Allrun
 
       - name: Summarize result
         if: always()
