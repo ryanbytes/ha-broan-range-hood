@@ -1,8 +1,8 @@
 name: NX-290W OpenFOAM Inspect
 
 on:
-  push:
-    branches: [nx290w-cfd-runner]
+  pull_request:
+    branches: [main]
     paths:
       - '.github/workflows/nx290w-inspect.yml'
   workflow_dispatch:
