@@ -77,15 +77,15 @@ blocks=[]
 for i,nz in enumerate(zcells):
     a=4*i; b=4*(i+1)
     blocks.append(f'    hex ({a} {a+1} {a+2} {a+3} {b} {b+1} {b+2} {b+3}) (65 28 {nz}) simpleGrading (1 1 1)')
-inlet=[]; outlet=[]; side=[]
+inlet=[]; outlet=[]; side_neg=[]; side_pos=[]
 for i in range(len(zcells)):
     a=4*i; b=4*(i+1)
     inlet.append(f'            ({a} {b} {b+3} {a+3})')
     outlet.append(f'            ({a+1} {a+2} {b+2} {b+1})')
-    side.append(f'            ({a} {a+1} {b+1} {b})')
-    side.append(f'            ({a+3} {b+3} {b+2} {a+2})')
+    side_neg.append(f'            ({a} {a+1} {b+1} {b})')
+    side_pos.append(f'            ({a+3} {b+3} {b+2} {a+2})')
 top=4*(len(zs)-1)
-block = '''FoamFile\n{\n    format ascii;\n    class dictionary;\n    location "system";\n    object blockMeshDict;\n}\nconvertToMeters 1;\nvertices\n(\n''' + '\n'.join(f'    ({x} {y} {z})' for x,y,z in verts) + '''\n);\nblocks\n(\n''' + '\n'.join(blocks) + '''\n);\nedges ();\nboundary\n(\n    inlet\n    {\n        type patch;\n        faces\n        (\n''' + '\n'.join(inlet) + '''\n        );\n    }\n    outlet\n    {\n        type patch;\n        faces\n        (\n''' + '\n'.join(outlet) + '''\n        );\n    }\n    side\n    {\n        type symmetryPlane;\n        faces\n        (\n''' + '\n'.join(side) + '''\n        );\n    }\n    bottom\n    {\n        type symmetryPlane;\n        faces ((0 3 2 1));\n    }\n    atmosphere\n    {\n        type patch;\n        faces ((%d %d %d %d));\n    }\n);\nmergePatchPairs ();\n''' % (top,top+1,top+2,top+3)
+block = '''FoamFile\n{\n    format ascii;\n    class dictionary;\n    location "system";\n    object blockMeshDict;\n}\nconvertToMeters 1;\nvertices\n(\n''' + '\n'.join(f'    ({x} {y} {z})' for x,y,z in verts) + '''\n);\nblocks\n(\n''' + '\n'.join(blocks) + '''\n);\nedges ();\nboundary\n(\n    inlet\n    {\n        type patch;\n        faces\n        (\n''' + '\n'.join(inlet) + '''\n        );\n    }\n    outlet\n    {\n        type patch;\n        faces\n        (\n''' + '\n'.join(outlet) + '''\n        );\n    }\n    sideNeg\n    {\n        type symmetryPlane;\n        faces\n        (\n''' + '\n'.join(side_neg) + '''\n        );\n    }\n    sidePos\n    {\n        type symmetryPlane;\n        faces\n        (\n''' + '\n'.join(side_pos) + '''\n        );\n    }\n    bottom\n    {\n        type symmetryPlane;\n        faces ((0 3 2 1));\n    }\n    atmosphere\n    {\n        type patch;\n        faces ((%d %d %d %d));\n    }\n);\nmergePatchPairs ();\n''' % (top,top+1,top+2,top+3)
 (case/'system'/'blockMeshDict').write_text(block)
 
 snappy='''FoamFile { format ascii; class dictionary; location "system"; object snappyHexMeshDict; }
