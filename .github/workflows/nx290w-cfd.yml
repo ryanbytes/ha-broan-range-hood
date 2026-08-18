@@ -15,7 +15,7 @@ jobs:
     container:
       image: microfluidica/openfoam:14
     env:
-      NX290W_NPROC: "4"
+      NX290W_NPROC: "2"
       NX290W_ENDTIME: "350"
     steps:
       - uses: actions/checkout@v4
