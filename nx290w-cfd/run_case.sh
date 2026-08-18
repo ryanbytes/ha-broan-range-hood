@@ -25,16 +25,23 @@ cp -a "$ROOT/overlay/." "$CASE/"
 chmod +x "$CASE/Allmesh" "$CASE/Allrun"
 cd "$CASE"
 
-NPROC="${NX290W_NPROC:-2}"
-foamDictionary system/decomposeParDict -entry numberOfSubdomains -set "$NPROC"
-foamDictionary system/snappyHexMeshDict -entry castellatedMeshControls.insidePoint -set '(8 5 1)'
-foamDictionary system/functions -entry forces.CofR -set '(0 0 0.244)'
-foamDictionary 0/U -entry UMean -set "$MODEL_MPS"
-foamDictionary system/controlDict -entry endTime -set "${NX290W_ENDTIME:-600}"
-foamDictionary system/controlDict -entry writeInterval -set 100
-foamDictionary system/snappyHexMeshDict -entry castellatedMeshControls.maxGlobalCells -set 650000
+NPROC="${NX290W_NPROC:-4}"
+ENDTIME="${NX290W_ENDTIME:-350}"
+
+# OpenFOAM 14 foamDictionary nested paths use '/', not dotted key names.
+foamDictionary -set "numberOfSubdomains=$NPROC" system/decomposeParDict
+foamDictionary -set "UMean=$MODEL_MPS" 0/U
+foamDictionary -set "endTime=$ENDTIME" system/controlDict
+foamDictionary -set "writeInterval=50" system/controlDict
+foamDictionary -set "castellatedMeshControls/insidePoint=(8 5 1)" system/snappyHexMeshDict
+foamDictionary -set "castellatedMeshControls/maxGlobalCells=450000" system/snappyHexMeshDict
+# Validation mesh: remove boundary-layer extrusion so the first corrected
+# full-width run can finish on the free runner. Re-enable layers for medium/final grids.
+foamDictionary -set "addLayers=false" system/snappyHexMeshDict
+
 cp "$ROOT/DTC-scaled.stl" "$CASE/constant/geometry/DTC-scaled.stl"
 
-echo "NX-290W target ${FULL_KN} kn; model speed ${MODEL_MPS} m/s; ranks ${NPROC}"
+echo "NX-290W target ${FULL_KN} kn; model speed ${MODEL_MPS} m/s; ranks ${NPROC}; endTime ${ENDTIME}"
+echo "Validation pass: symmetric full-width mesh, addLayers=false"
 ./Allrun 2>&1 | tee "NX290W_${FULL_KN}kn.log"
 python3 "$ROOT/postprocess_forces.py" "$CASE" "$FULL_KN" | tee "$CASE/NX290W_summary.txt"

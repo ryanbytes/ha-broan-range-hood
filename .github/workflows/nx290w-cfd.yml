@@ -1,11 +1,6 @@
 name: NX-290W CFD
 
 on:
-  push:
-    branches: [nx290w-cfd-runner]
-    paths:
-      - 'nx290w-cfd/**'
-      - '.github/workflows/nx290w-cfd.yml'
   pull_request:
     branches: [main]
     paths:
@@ -20,8 +15,8 @@ jobs:
     container:
       image: microfluidica/openfoam:14
     env:
-      NX290W_NPROC: "2"
-      NX290W_ENDTIME: "600"
+      NX290W_NPROC: "4"
+      NX290W_ENDTIME: "350"
     steps:
       - uses: actions/checkout@v4
 
@@ -35,13 +30,13 @@ jobs:
           nproc
           free -h
 
-      - name: Generate 1:50 NX-290W geometry
+      - name: Generate corrected 1:50 NX-290W geometry
         shell: bash
         run: |
           python3 nx290w-cfd/generate_stl.py
           ls -lh nx290w-cfd/DTC-scaled.stl
 
-      - name: Run 60-knot free-surface CFD
+      - name: Run corrected 60-knot free-surface CFD
         shell: bash
         run: |
           chmod +x nx290w-cfd/run_case.sh
@@ -64,6 +59,6 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: nx290w-cfd-60kn
+          name: nx290w-cfd-60kn-corrected
           path: nx290w-cfd/artifact
           retention-days: 7

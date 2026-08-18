@@ -36,6 +36,8 @@ def facet(f,a,b,c):
     f.write("    endloop\n  endfacet\n")
 
 def hull_vertices(h):
+    # The DTC case has inflow at +x and water moving toward -x.
+    # Put the fine bow at +x and the transom/aft end at -x.
     xs=[h["L"]*i/(NX-1) for i in range(NX)]
     th=[2*math.pi*j/NTH for j in range(NTH)]
     H=(h["T"]+h["deck"])/2
@@ -43,12 +45,13 @@ def hull_vertices(h):
     v=[]
     for x in xs:
         fx=longitudinal_factor(x,h["L"])
+        x_phys=h["x0"]+h["L"]-x
         ring=[]
         for t in th:
             c=math.cos(t)
             y=(h["B"]/2)*fx*(1 if c>=0 else -1)*(abs(c)**0.72)
             z=zc+H*math.sin(t)
-            ring.append((x+h["x0"],y+h["y0"],z))
+            ring.append((x_phys,y+h["y0"],z))
         v.append(ring)
     return v,zc
 
@@ -57,16 +60,18 @@ with out.open("w") as f:
     f.write("solid NX290W_1to50\n")
     for h in HULLS:
         v,zc=hull_vertices(h)
+        # x decreases as ring index increases, so reverse winding versus the
+        # original generator to preserve outward-facing surface normals.
         for i in range(NX-1):
             for j in range(NTH):
                 j2=(j+1)%NTH
                 a,b,c,d=v[i][j],v[i][j2],v[i+1][j2],v[i+1][j]
-                facet(f,a,b,c); facet(f,a,c,d)
-        bow=(h["x0"],h["y0"],zc)
-        stern=(h["x0"]+h["L"],h["y0"],zc)
+                facet(f,a,c,b); facet(f,a,d,c)
+        bow=(h["x0"]+h["L"],h["y0"],zc)
+        stern=(h["x0"],h["y0"],zc)
         for j in range(NTH):
             j2=(j+1)%NTH
-            facet(f,bow,v[0][j2],v[0][j])
-            facet(f,stern,v[-1][j],v[-1][j2])
+            facet(f,bow,v[0][j],v[0][j2])
+            facet(f,stern,v[-1][j2],v[-1][j])
     f.write("endsolid NX290W_1to50\n")
 print(out)
