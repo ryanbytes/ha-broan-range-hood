@@ -1,0 +1,14 @@
+#!/bin/bash
+set -e
+cd "${0%/*}" || exit 1
+. "$WM_PROJECT_DIR/bin/tools/RunFunctions"
+
+rm -f constant/geometry/DTC-scaled.stl.gz
+test -s constant/geometry/DTC-scaled.stl
+
+runApplication surfaceFeatures
+runApplication blockMesh
+runApplication decomposePar -noFields
+runParallel refineMesh
+runParallel snappyHexMesh
+runParallel renumberMesh -noFields

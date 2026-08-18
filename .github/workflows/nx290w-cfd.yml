@@ -1,0 +1,64 @@
+name: NX-290W CFD
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'nx290w-cfd/**'
+      - '.github/workflows/nx290w-cfd.yml'
+  workflow_dispatch:
+
+jobs:
+  cfd60:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    container:
+      image: microfluidica/openfoam:14
+    env:
+      NX290W_NPROC: "2"
+      NX290W_ENDTIME: "1000"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prepare container
+        shell: bash
+        run: |
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y python3
+          echo "WM_PROJECT_DIR=${WM_PROJECT_DIR:-unset}"
+          ls -d /opt/openfoam14 /opt/OpenFOAM/OpenFOAM-14 2>/dev/null || true
+          nproc
+          free -h
+
+      - name: Generate corrected 1:50 NX-290W geometry
+        shell: bash
+        run: |
+          python3 nx290w-cfd/generate_stl.py
+          ls -lh nx290w-cfd/DTC-scaled.stl
+
+      - name: Run corrected 60-knot free-surface CFD
+        shell: bash
+        run: |
+          chmod +x nx290w-cfd/run_case.sh
+          chmod +x nx290w-cfd/overlay/Allmesh nx290w-cfd/overlay/Allrun
+          nx290w-cfd/run_case.sh 60
+
+      - name: Collect results and diagnostics
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p nx290w-cfd/artifact
+          CASE=nx290w-cfd/runs/NX290W_60kn_1to50
+          cp -f "$CASE"/NX290W_summary.txt nx290w-cfd/artifact/ 2>/dev/null || true
+          cp -f "$CASE"/NX290W_60kn.log nx290w-cfd/artifact/ 2>/dev/null || true
+          cp -f "$CASE"/log.* nx290w-cfd/artifact/ 2>/dev/null || true
+          cp -rf "$CASE"/postProcessing nx290w-cfd/artifact/ 2>/dev/null || true
+          for f in nx290w-cfd/artifact/log.*; do [ -f "$f" ] && { echo "===== $f ====="; tail -200 "$f"; }; done
+          find nx290w-cfd/artifact -maxdepth 4 -type f -ls || true
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nx290w-cfd-60kn-convergence
+          path: nx290w-cfd/artifact
+          retention-days: 7

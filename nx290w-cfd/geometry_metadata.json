@@ -1,0 +1,16 @@
+{
+  "design": "Ryan J. Stoner / NX-290W",
+  "CFD_basis": "OpenFOAM 14 official incompressibleVoF/DTCHull tutorial overlay",
+  "scale_ratio": 50,
+  "full_scale_LOA_m": 300.0,
+  "model_LOA_m": 6.0,
+  "full_scale_beam_m": 60.0,
+  "model_beam_m": 1.2,
+  "full_scale_screening_displacement_t": 36490,
+  "model_geometry_bounds_m": [[-3.0,-0.6,0.084],[3.0,0.6,0.344]],
+  "waterline_model_z_m": 0.244,
+  "wetted_area_model_m2": 6.449196354274866,
+  "wetted_area_full_m2": 16122.990885687164,
+  "target_full_scale_speeds_kn": [50,60,70],
+  "model_speeds_mps": {"50":3.6376684094073224,"60":4.365202091288787,"70":5.092735773170252}
+}
