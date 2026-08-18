@@ -6,6 +6,11 @@ on:
     paths:
       - '.github/workflows/nfss70-cavitation.yml'
       - 'nfss70/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/nfss70-cavitation.yml'
+      - 'nfss70/**'
   workflow_dispatch:
 
 permissions:
@@ -86,8 +91,6 @@ jobs:
               (r'nu\s+9e-07;', f'nu              {nu:.9g};'),
               (r'rho\s+1000;', f'rho             {rho:.9g};')
           ])
-          # Keep runtime short enough for free CI while allowing several
-          # convective times across the tutorial body at 70 kn.
           patch('system/controlDict', [
               (r'endTime\s+0\.05;', 'endTime                 0.01;')
           ])
