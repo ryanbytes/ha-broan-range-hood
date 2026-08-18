@@ -33,13 +33,14 @@ jobs:
           cd "$CASE"
           surfaceCheck constant/geometry/NX290W.stl 2>&1 | tee log.surfaceCheck
           blockMesh 2>&1 | tee log.blockMesh
-          snappyHexMesh -overwrite 2>&1 | tee log.snappyHexMesh
-          checkMesh -allGeometry -allTopology 2>&1 | tee log.checkMesh
+          decomposePar 2>&1 | tee log.decomposePar
+          mpirun --oversubscribe -np 4 snappyHexMesh -parallel -overwrite 2>&1 | tee log.snappyHexMesh
+          mpirun --oversubscribe -np 4 checkMesh -parallel -allGeometry -allTopology 2>&1 | tee log.checkMesh
           {
             echo '=== SURFACE ==='
             grep -E 'Triangles|Bounding Box|Surface has|Surface is|unconnected parts|normal orientation|End' log.surfaceCheck || true
             echo '=== LAYERS ==='
-            grep -Ei 'layer|extrud|faces.*layer|cells.*layer' log.snappyHexMesh | tail -120 || true
+            grep -Ei 'layer|extrud|faces.*layer|cells.*layer' log.snappyHexMesh | tail -160 || true
             echo '=== CHECKMESH ==='
             grep -E 'cells:|faces:|Max aspect ratio|Mesh non-orthogonality|Max skewness|concave|Failed|Mesh OK' log.checkMesh || true
           } | tee nx290w_mesh_gate_summary.txt
@@ -47,10 +48,10 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: nx290w-free-surface-mesh-gate
+          name: nx290w-free-surface-mesh-gate-parallel
           path: |
             nx290w-free-meshcheck/nx290w_mesh_gate_summary.txt
             nx290w-free-meshcheck/log.*
             nx290w-free-meshcheck/constant/geometry/NX290W.stl
-            nx290w-free-meshcheck/constant/polyMesh/**
+            nx290w-free-meshcheck/processor*/constant/polyMesh/**
           retention-days: 7
