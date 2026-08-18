@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -eo pipefail
 . /opt/openfoam14/etc/bashrc
+set -u
 rm -rf nx290w
 cp -r "$FOAM_TUTORIALS/incompressibleFluid/motorBike/motorBike" nx290w
 python3 cfd/nx290w_setup.py nx290w 5.635451667
