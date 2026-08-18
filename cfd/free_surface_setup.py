@@ -101,17 +101,17 @@ geometry
 }
 castellatedMeshControls
 {
-    maxLocalCells 1600000;
-    maxGlobalCells 2200000;
+    maxLocalCells 700000;
+    maxGlobalCells 900000;
     minRefinementCells 0;
     nCellsBetweenLevels 2;
     features ();
-    refinementSurfaces { hull { level (2 3); } }
+    refinementSurfaces { hull { level (2 2); } }
     resolveFeatureAngle 45;
     refinementRegions
     {
-        nearHull { mode inside; level 2; }
-        freeSurface { mode inside; level 2; }
+        nearHull { mode inside; level 1; }
+        freeSurface { mode inside; level 1; }
         wake { mode inside; level 1; }
     }
     insidePoint (-3.0 2.0 0.7);
