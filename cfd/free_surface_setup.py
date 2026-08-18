@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from pathlib import Path
-import math, sys, re
+import math, sys
 
 case = Path(sys.argv[1])
 U = float(sys.argv[2])
@@ -30,6 +30,9 @@ def write_tri(f,a,b,c,target):
     f.write('    endloop\n  endfacet\n')
 
 def generate_hulls(path, nx=121, nt=96):
+    # Smooth triaxial-ellipsoid longitudinal taper. Both half-beam and
+    # vertical radius go to zero at bow/stern; submerged volume at z<0 is
+    # pi*L*B*T/6 per hull, about 40,228 m^3 total full-scale.
     with open(path,'w') as f:
         f.write('solid hull\n')
         for Lf,Bf,Tf,ycf in hulls:
@@ -38,11 +41,11 @@ def generate_hulls(path, nx=121, nt=96):
             for i in range(1,nx-1):
                 x=L*i/(nx-1)
                 xi=2*x/L-1
-                sx=max(0.0,1-xi*xi)
+                s=math.sqrt(max(0.0,1-xi*xi))
                 ring=[]
                 for j in range(nt):
                     th=2*math.pi*j/nt
-                    ring.append((x, yc+0.5*B*sx*math.cos(th), T*math.sin(th)))
+                    ring.append((x, yc+0.5*B*s*math.cos(th), T*s*math.sin(th)))
                 rings.append(ring)
             for ri in range(len(rings)-1):
                 r0,r1=rings[ri],rings[ri+1]
@@ -211,7 +214,6 @@ boundaryField
 dimensions [length];
 value 0;
 ''')
-# Seawater properties; air left from the OpenFOAM tutorial.
 (case/'constant'/'physicalProperties.water').write_text('''FoamFile { format ascii; class dictionary; location "constant"; object physicalProperties.water; }
 viscosityModel constant;
 nu 1.0e-06;
@@ -250,7 +252,6 @@ timeFormat general;
 timePrecision 6;
 runTimeModifiable yes;
 ''')
-# Keep official local-Euler/PIMPLE scheme, but cap local Courant number more conservatively.
 fvs=case/'system'/'fvSolution'
 s=fvs.read_text().replace('maxCo               10;', 'maxCo               4;').replace('maxAlphaCo          1;', 'maxAlphaCo          0.5;')
 fvs.write_text(s)
