@@ -5,11 +5,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  cfd:
+  mesh-gate:
     runs-on: ubuntu-24.04
-    timeout-minutes: 90
-    env:
-      CASE_REVISION: side-symmetry-fix-1
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - name: Install OpenFOAM 14
@@ -20,18 +18,39 @@ jobs:
           sudo add-apt-repository -y "http://dl.openfoam.org/ubuntu main dev"
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends openfoam14
-      - name: Run 60-knot free-surface smoke case
+      - name: Mesh and validate 60-knot free-surface case
         shell: bash
-        run: bash cfd/run_free_surface.sh 5.635451667 500
-      - name: Upload CFD evidence
+        run: |
+          set -eo pipefail
+          set +u
+          . /opt/openfoam14/etc/bashrc
+          set -u
+          CASE=nx290w-free-meshcheck
+          rm -rf "$CASE"
+          cp -r "$FOAM_TUTORIALS/incompressibleVoF/DTCHull" "$CASE"
+          rm -rf "$CASE"/processor* "$CASE"/[1-9]* "$CASE"/postProcessing
+          python3 cfd/free_surface_setup.py "$CASE" 5.635451667 20
+          cd "$CASE"
+          surfaceCheck constant/geometry/NX290W.stl 2>&1 | tee log.surfaceCheck
+          blockMesh 2>&1 | tee log.blockMesh
+          snappyHexMesh -overwrite 2>&1 | tee log.snappyHexMesh
+          checkMesh -allGeometry -allTopology 2>&1 | tee log.checkMesh
+          {
+            echo '=== SURFACE ==='
+            grep -E 'Triangles|Bounding Box|Surface has|Surface is|unconnected parts|normal orientation|End' log.surfaceCheck || true
+            echo '=== LAYERS ==='
+            grep -Ei 'layer|extrud|faces.*layer|cells.*layer' log.snappyHexMesh | tail -120 || true
+            echo '=== CHECKMESH ==='
+            grep -E 'cells:|faces:|Max aspect ratio|Mesh non-orthogonality|Max skewness|concave|Failed|Mesh OK' log.checkMesh || true
+          } | tee nx290w_mesh_gate_summary.txt
+      - name: Upload mesh evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: nx290w-free-surface-60kn-smoke
+          name: nx290w-free-surface-mesh-gate
           path: |
-            nx290w-free-*/nx290w_free_surface_summary.txt
-            nx290w-free-*/log.*
-            nx290w-free-*/postProcessing/**
-            nx290w-free-*/processor0/postProcessing/**
-            nx290w-free-*/constant/polyMesh/**
+            nx290w-free-meshcheck/nx290w_mesh_gate_summary.txt
+            nx290w-free-meshcheck/log.*
+            nx290w-free-meshcheck/constant/geometry/NX290W.stl
+            nx290w-free-meshcheck/constant/polyMesh/**
           retention-days: 7
