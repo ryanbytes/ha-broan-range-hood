@@ -1,0 +1,35 @@
+name: NX290W Free Surface CFD
+on:
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  cfd:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install OpenFOAM 14
+        shell: bash
+        run: |
+          set -euxo pipefail
+          sudo wget -qO /etc/apt/trusted.gpg.d/openfoam.asc https://dl.openfoam.org/gpg.key
+          sudo add-apt-repository -y "http://dl.openfoam.org/ubuntu main dev"
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends openfoam14
+      - name: Run 60-knot free-surface smoke case
+        shell: bash
+        run: bash cfd/run_free_surface.sh 5.635451667 500
+      - name: Upload CFD evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nx290w-free-surface-60kn-smoke
+          path: |
+            nx290w-free-*/nx290w_free_surface_summary.txt
+            nx290w-free-*/log.*
+            nx290w-free-*/postProcessing/**
+            nx290w-free-*/processor0/postProcessing/**
+            nx290w-free-*/constant/polyMesh/**
+          retention-days: 7
