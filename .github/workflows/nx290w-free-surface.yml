@@ -8,6 +8,8 @@ jobs:
   cfd:
     runs-on: ubuntu-24.04
     timeout-minutes: 90
+    env:
+      CASE_REVISION: side-symmetry-fix-1
     steps:
       - uses: actions/checkout@v4
       - name: Install OpenFOAM 14
