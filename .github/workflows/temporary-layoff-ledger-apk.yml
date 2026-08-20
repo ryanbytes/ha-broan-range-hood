@@ -36,13 +36,15 @@ jobs:
         with:
           gradle-version: '8.11.1'
 
-      - name: Restore Android source
+      - name: Restore and verify Android source
         run: |
           rm -rf /tmp/layoff-ledger
           mkdir -p /tmp/layoff-ledger
-          base64 -d tmp/layoff-ledger-build/android-src.zip.b64 > /tmp/layoff-ledger/android-src.zip
-          cd /tmp/layoff-ledger
-          unzip -q android-src.zip -d android
+          cat tmp/layoff-ledger-build/android-src.zip.b64.part* > /tmp/layoff-ledger/android-src.zip.b64
+          base64 -d /tmp/layoff-ledger/android-src.zip.b64 > /tmp/layoff-ledger/android-src.zip
+          echo '7df98473ae90f3c14c86b01ee93db17b163948e311eba3bf62799d1200a7f3cb  /tmp/layoff-ledger/android-src.zip' | sha256sum -c -
+          unzip -t /tmp/layoff-ledger/android-src.zip
+          unzip -q /tmp/layoff-ledger/android-src.zip -d /tmp/layoff-ledger/android
 
       - name: Build debug APK
         working-directory: /tmp/layoff-ledger/android
